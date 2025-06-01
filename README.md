@@ -5,6 +5,7 @@
 ### GET method
 #### /todos : To get all Todos
 #### /todo/{id} : To get one Todo. Replace {id} with the id of the Todo you want to retrieve
+#### /todos/completed : To get completed Todos
 
 ### POST method
 #### /todo : To create a new Todo
