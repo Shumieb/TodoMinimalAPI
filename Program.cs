@@ -53,8 +53,8 @@ app.MapDelete("/todo/{id}", async (TodoDb db, int id) =>
 });
 
 // filter by isComplete
-app.MapGet("/todos/completed", async (TodoDb db, string? completed) => await db.Todos
-                                                                                .Where(todo => todo.IsComplete == true)
-                                                                                .ToListAsync());
+app.MapGet("/todos/completed", async (TodoDb db) => await db.Todos
+                                                            .Where(todo => todo.IsComplete == true)
+                                                            .ToListAsync());
 
 app.Run();
