@@ -3,17 +3,54 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// database connection string
 var connectionString = builder.Configuration.GetConnectionString("Todos") ?? "Data Source=Todos.db";
 
+// add an sqlite database
 builder.Services.AddSqlite<TodoDb>(connectionString);
 
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
-app.MapGet("/todos", () => "Here are your todos!");
-app.MapGet("/todos/{id:int}", (int id) => { return "Here are your todos! " + id; });
-app.MapPut("/", () => "Update todo");
-app.MapPost("/", () => "add todo");
-app.MapDelete("/todos/{id:int}", (int id) => { return "delete todo " + id; });
+// get all todos
+app.MapGet("/todos", async (TodoDb db) => await db.Todos.ToListAsync());
+
+// get todos by Id
+app.MapGet("/todo/{id}", async (TodoDb db, int id) => await db.Todos.FindAsync(id));
+
+// add a new todo
+app.MapPost("/todo", async (TodoDb db, Todo todo) =>
+{
+    await db.Todos.AddAsync(todo);
+    await db.SaveChangesAsync();
+    return Results.Created($"/todo/{todo.Id}", todo);
+});
+
+// update a todo
+app.MapPut("/todo/{id}", async (TodoDb db, Todo updatedTodo, int id) =>
+{
+    var todo = await db.Todos.FindAsync(id);
+    if (todo is null) return Results.NotFound();
+
+    todo.Name = updatedTodo.Name;
+    todo.Description = updatedTodo.Description;
+    todo.IsComplete = updatedTodo.IsComplete;
+
+    await db.SaveChangesAsync();
+    return Results.NoContent();
+});
+
+// delete a todo
+app.MapDelete("/todo/{id}", async (TodoDb db, int id) =>
+{
+    var todo = await db.Todos.FindAsync(id);
+    if (todo is null)
+    {
+        return Results.NotFound();
+    }
+    db.Todos.Remove(todo);
+    await db.SaveChangesAsync();
+    return Results.Ok();
+});
+
 
 app.Run();

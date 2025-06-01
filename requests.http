@@ -1,21 +1,31 @@
-GET http://localhost:5159
-
-###
-
 GET http://localhost:5159/todos
 
 ###
 
-GET http://localhost:5159/todos/1
+GET http://localhost:5159/todo/2
 
 ###
 
-PUT http://localhost:5159
+PUT http://localhost:5159/todo/2
+Content-Type: application/json
+
+{
+    "name": "Todo 5",
+    "description": "This is Todo 5",
+    "IsComplete": true
+}
 
 ###
 
-POST  http://localhost:5159
+POST  http://localhost:5159/todo
+Content-Type: application/json
+
+{
+    "name": "Todo 3",
+    "description": "This is Todo 3",
+    "IsComplete": false
+}
 
 ###
 
-DELETE http://localhost:5159/todos/2
+DELETE http://localhost:5159/todo/2
